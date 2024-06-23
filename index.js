@@ -1,11 +1,15 @@
+import dotenv from "dotenv";
 import express from "express";
 import bodyParser from "body-parser";
 
+dotenv.config({
+  path: './env'
+});
+
 const app = express();
-const port = 3000;
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.listen(port, () => {
-  console.log(`Successfully started server on port ${port}.`);
+app.listen(process.env.PORT, () => {
+  console.log(`Successfully started server on port ${process.env.PORT}.`);
 });
