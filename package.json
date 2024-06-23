@@ -1,0 +1,21 @@
+{
+  "name": "jokeapi",
+  "version": "1.0.0",
+  "description": "JokeAPI",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "keywords": [
+    "joke",
+    "api",
+    "js"
+  ],
+  "author": "anmol420",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "express": "^4.19.2"
+  }
+}
