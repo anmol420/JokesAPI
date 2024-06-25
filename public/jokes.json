@@ -503,5 +503,10 @@
         "id": 101,
         "jokeText": "A Coder Never Sleeps",
         "jokeType": "Coding"
+    },
+    {
+        "id": 102,
+        "jokeText": "Science Never Leaves A Old Leaf Unturn.",
+        "jokeType": "Science"
     }
 ]
