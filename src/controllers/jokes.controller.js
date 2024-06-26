@@ -112,7 +112,7 @@ const addJoke = asyncHandler ( async (req, res) => {
                     new ApiResponse(
                         500,
                         {},
-                        "Internal Server Error."
+                        "Unable To Post To The File."
                     )
                 );
         }
@@ -164,7 +164,72 @@ const editJoke = asyncHandler ( async (req, res) => {
             const jsonJoke = JSON.stringify(jokeArray);
             fs.writeFileSync("./public/jokes.json", jsonJoke, "utf-8");
         } catch (e) {
-            throw new ApiError(500, "Internal Server Error.");
+            return res
+                .status(500)
+                .json(
+                    new ApiResponse(
+                        500,
+                        {},
+                        "Unable To Put To The File."
+                    )
+                )
+        }
+        return res
+            .status(201)
+            .json(
+                new ApiResponse(
+                    201,
+                    jokeArray[id - 1],
+                    `ID: ${id} Updated.`
+                )
+            );
+    }
+});
+
+const patchJoke = asyncHandler( async (req, res) => {
+    const id = parseInt(req.params.id);
+    const jokeType = req.body.jokeType;
+    const jokeText = req.body.jokeText;
+    if (id > jokes.length) {
+        return res
+            .status(404)
+            .json(
+                new ApiResponse(
+                    404,
+                    {},
+                    `ID: ${id} Does Not Exist.`
+                )
+            );
+    } else if (jokeType === undefined && jokeText === undefined) {
+        return res
+            .status(404)
+            .json(
+                new ApiResponse(
+                    404,
+                    {},
+                    "Atleast Provide One - `jokeType` or `JokeText`"
+                )
+            );
+    } else {
+        jokeArray.forEach((joke) => {
+            if (joke.id === id) {
+                jokeArray[id - 1].jokeType = jokeType || jokeArray[id - 1].jokeType;
+                jokeArray[id - 1].jokeText = jokeText || jokeArray[id - 1].jokeText;
+            }
+        });
+        try {
+            const jsonJoke = JSON.stringify(jokeArray);
+            fs.writeFileSync("./public/jokes.json", jsonJoke, "utf-8");
+        } catch (e) {
+            return res
+                .status(500)
+                .json(
+                    new ApiResponse(
+                        500,
+                        {},
+                        "Unable To Patch To The File."
+                    )
+                )
         }
         return res
             .status(201)
@@ -183,5 +248,6 @@ export {
     jokeById,
     jokeFilter,
     addJoke,
-    editJoke
+    editJoke,
+    patchJoke
 };
