@@ -243,11 +243,63 @@ const patchJoke = asyncHandler( async (req, res) => {
     }
 });
 
+const deleteJoke = asyncHandler( async (req, res) => {
+    const key = req.query.key;
+    const id = parseInt(req.params.id);
+    if (key === process.env.MASTER_KEY) {
+        if (id <= jokes.length) {
+            const newJokeArray = jokeArray.filter((joke) => joke.id !== id);
+            try {
+                const jsonJoke = JSON.stringify(newJokeArray);
+                fs.writeFileSync("./public/jokes.json", jsonJoke, "utf-8");
+            } catch (e) {
+                return res
+                    .status(500)
+                    .json(
+                        new ApiResponse(
+                            500,
+                            {},
+                            "Unable To Patch To The File."
+                        )
+                    )
+            }
+            return res
+                .status(200)
+                .json(
+                    new ApiResponse(
+                        200,
+                        {},
+                        `ID: ${id} Deleted Successfully.`
+                    )
+                );
+        } else {
+            return res
+                .status(404)
+                .json(
+                    new ApiResponse(
+                        404,
+                        {},
+                        `ID: ${id} Does Not Exist.`
+                    )
+                );
+        }
+    } else {
+        return res
+            .status(401)
+            .json(
+                401,
+                {},
+                "Unauthorised - Invalid Key !"
+            );
+    }
+});
+
 export {
     randomJoke,
     jokeById,
     jokeFilter,
     addJoke,
     editJoke,
-    patchJoke
+    patchJoke,
+    deleteJoke
 };

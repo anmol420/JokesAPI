@@ -498,15 +498,5 @@
         "id": 100,
         "jokeText": "What do you call fake spaghetti? An impasta!",
         "jokeType": "Food"
-    },
-    {
-        "id": 101,
-        "jokeText": "Coding Is Easy !",
-        "jokeType": "Coding"
-    },
-    {
-        "id": 102,
-        "jokeText": "Science Never Leaves A Old Leaf Unturn.",
-        "jokeType": "Science"
     }
 ]
