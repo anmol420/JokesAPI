@@ -129,9 +129,59 @@ const addJoke = asyncHandler ( async (req, res) => {
     }
 });
 
+const editJoke = asyncHandler ( async (req, res) => {
+    const id = parseInt(req.params.id);
+    const jokeType = req.body.jokeType;
+    const jokeText = req.body.jokeText;
+    if (id > jokes.length) {
+        return res
+            .status(404)
+            .json(
+                new ApiResponse(
+                    404,
+                    {},
+                    `ID: ${id} Does Not Exist.`
+                )
+            );
+    } else if (jokeText === undefined || jokeType === undefined) {
+        return res
+            .status(400)
+            .json(
+                new ApiResponse(
+                    400,
+                    {},
+                    "Fields - `jokeType` and `jokeText` - Not Found."
+                )
+            );
+    } else {
+        jokeArray.forEach((joke) => {
+            if (joke.id === id) {
+                jokeArray[id - 1].jokeType = jokeType;
+                jokeArray[id - 1].jokeText = jokeText;
+            }
+        });
+        try {
+            const jsonJoke = JSON.stringify(jokeArray);
+            fs.writeFileSync("./public/jokes.json", jsonJoke, "utf-8");
+        } catch (e) {
+            throw new ApiError(500, "Internal Server Error.");
+        }
+        return res
+            .status(201)
+            .json(
+                new ApiResponse(
+                    201,
+                    jokeArray[id - 1],
+                    `ID: ${id} Updated.`
+                )
+            );
+    }
+});
+
 export {
     randomJoke,
     jokeById,
     jokeFilter,
-    addJoke
+    addJoke,
+    editJoke
 };
