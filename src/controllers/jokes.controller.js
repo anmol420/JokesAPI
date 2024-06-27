@@ -1,7 +1,6 @@
 import fs from "fs";
 import path from 'path';
-import { fileURLToPath } from 'url';
-import simpleGit from "simple-git";
+import { fileURLToPath } from 'url';;
 
 import asyncHandler from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
@@ -10,22 +9,11 @@ import jokes from "../../public/jokes.json" assert { type: 'json' };
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const git = simpleGit(__dirname);
 
 const dataFilePath = path.join(__dirname, "../../public/jokes.json")
 
 let jokesJson = fs.readFileSync(dataFilePath, "utf-8");
 let jokeArray = JSON.parse(jokesJson);
-
-const pushToGitHub = async () => {
-    try {
-        await git.add(dataFilePath);
-        await git.commit('Update jokes.json');
-        await git.push('origin', 'main'); // Replace 'main' with your branch name if it's different
-    } catch (err) {
-        console.error('Error pushing to GitHub:', err);
-    }
-};
 
 const randomJoke = asyncHandler( async (req, res) => {
     return res
@@ -115,7 +103,6 @@ const addJoke = asyncHandler ( async (req, res) => {
         const jsonJoke = JSON.stringify(jokeArray);
         try {
             fs.writeFileSync(dataFilePath, jsonJoke, "utf-8");
-            await pushToGitHub();
             return res
                 .status(200)
                 .json(
@@ -183,7 +170,6 @@ const editJoke = asyncHandler ( async (req, res) => {
         try {
             const jsonJoke = JSON.stringify(jokeArray);
             fs.writeFileSync(dataFilePath, jsonJoke, "utf-8");
-            await pushToGitHub();
         } catch (e) {
             return res
                 .status(500)
@@ -241,7 +227,6 @@ const patchJoke = asyncHandler( async (req, res) => {
         try {
             const jsonJoke = JSON.stringify(jokeArray);
             fs.writeFileSync(dataFilePath, jsonJoke, "utf-8");
-            await pushToGitHub();
         } catch (e) {
             return res
                 .status(500)
@@ -274,7 +259,6 @@ const deleteJoke = asyncHandler( async (req, res) => {
             try {
                 const jsonJoke = JSON.stringify(newJokeArray);
                 fs.writeFileSync(dataFilePath, jsonJoke, "utf-8");
-                await pushToGitHub();
             } catch (e) {
                 return res
                     .status(500)
