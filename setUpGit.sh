@@ -11,5 +11,5 @@ fi
 
 # Set remote origin if it doesn't exist
 if ! git remote | grep -q origin; then
-  git remote add origin https://$GIT_USER_NAME:$GIT_TOKEN@github.com/your-github-username/your-repo-name.git
+  git remote add origin https://$GIT_USER_NAME:$GIT_TOKEN@github.com/anmol420/JokesAPI.git
 fi
