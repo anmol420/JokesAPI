@@ -5,7 +5,8 @@ import {
     jokeById,
     jokeFilter,
     editJoke,
-    patchJoke
+    patchJoke,
+    deleteJoke
 } from "../controllers/jokes.controller.js";
 
 const router = Router();
@@ -21,5 +22,7 @@ router.route("/filter").get(jokeFilter);
 router.route("/editJoke/:jokeID").put(editJoke);
 
 router.route("/patchJoke/:jokeID").patch(patchJoke);
+
+router.route("/deleteJoke/:jokeID").delete(deleteJoke);
 
 export default router;

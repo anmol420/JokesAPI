@@ -272,11 +272,62 @@ const patchJoke = asyncHandler ( async (req, res) => {
     }
 });
 
+const deleteJoke = asyncHandler ( async (req, res) => {
+    const jokeID = parseInt(req.params.jokeID);
+    const key = req.query.key;
+
+    if (key === process.env.MASTER_KEY) {
+        try {
+            const result = await Joke.findOneAndDelete({ jokeID });
+            if (!result) {
+                return res
+                    .status(404)
+                    .json(
+                        new ApiResponse(
+                            404,
+                            {},
+                            `ID: ${jokeID} Does Not Exist.`
+                        )
+                    );
+            }
+
+            return res
+                .status(200)
+                .json(
+                    new ApiResponse(
+                        200,
+                        {},
+                        `ID: ${jokeID} Deleted Successfully.`
+                    )
+                );
+        } catch (err) {
+            return res
+                .status(500)
+                .json(
+                    new ApiResponse(
+                        500,
+                        {},
+                        "Unable To Access The Database."
+                    )
+                );
+        }
+    } else {
+        return res
+            .status(401)
+            .json(
+                401,
+                {},
+                "Unauthorised - Invalid Key !"
+            );
+    }
+});
+
 export {
     addJoke,
     randomJoke,
     jokeById,
     jokeFilter,
     editJoke,
-    patchJoke
+    patchJoke,
+    deleteJoke
 };
