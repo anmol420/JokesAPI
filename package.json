@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon -r dotenv/config --experimental-json-modules ./src/index.js",
-    "start": "git config --global user.name $GIT_USER_NAME && git config --global user.email $GIT_USER_EMAIL && node ./src/index.js"
+    "start": "./setupGit.sh && node ./src/index.js"
   },
   "keywords": [
     "joke",
