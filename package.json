@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon -r dotenv/config --experimental-json-modules ./src/index.js",
-    "start": "node ./src/index.js"
+    "start": "git config --global user.name $GIT_USER_NAME && git config --global user.email $GIT_USER_EMAIL && node ./src/index.js"
   },
   "keywords": [
     "joke",
@@ -19,7 +19,8 @@
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
-    "express": "^4.19.2"
+    "express": "^4.19.2",
+    "simple-git": "^3.25.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.4"

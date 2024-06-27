@@ -1,12 +1,31 @@
 import fs from "fs";
+import path from 'path';
+import { fileURLToPath } from 'url';
+import simpleGit from "simple-git";
 
 import asyncHandler from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jokes from "../../public/jokes.json" assert { type: 'json' };
 
-let jokesJson = fs.readFileSync("./public/jokes.json", "utf-8");
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const git = simpleGit(__dirname);
+
+const dataFilePath = path.join(__dirname, "../../public/jokes.json")
+
+let jokesJson = fs.readFileSync(dataFilePath, "utf-8");
 let jokeArray = JSON.parse(jokesJson);
+
+const pushToGitHub = async () => {
+    try {
+        await git.add(dataFilePath);
+        await git.commit('Update jokes.json');
+        await git.push('origin', 'main'); // Replace 'main' with your branch name if it's different
+    } catch (err) {
+        console.error('Error pushing to GitHub:', err);
+    }
+};
 
 const randomJoke = asyncHandler( async (req, res) => {
     return res
@@ -95,7 +114,8 @@ const addJoke = asyncHandler ( async (req, res) => {
         jokeArray.push(newJoke);
         const jsonJoke = JSON.stringify(jokeArray);
         try {
-            fs.writeFileSync("./public/jokes.json", jsonJoke, "utf-8");
+            fs.writeFileSync(dataFilePath, jsonJoke, "utf-8");
+            await pushToGitHub();
             return res
                 .status(200)
                 .json(
@@ -162,7 +182,8 @@ const editJoke = asyncHandler ( async (req, res) => {
         });
         try {
             const jsonJoke = JSON.stringify(jokeArray);
-            fs.writeFileSync("./public/jokes.json", jsonJoke, "utf-8");
+            fs.writeFileSync(dataFilePath, jsonJoke, "utf-8");
+            await pushToGitHub();
         } catch (e) {
             return res
                 .status(500)
@@ -219,7 +240,8 @@ const patchJoke = asyncHandler( async (req, res) => {
         });
         try {
             const jsonJoke = JSON.stringify(jokeArray);
-            fs.writeFileSync("./public/jokes.json", jsonJoke, "utf-8");
+            fs.writeFileSync(dataFilePath, jsonJoke, "utf-8");
+            await pushToGitHub();
         } catch (e) {
             return res
                 .status(500)
@@ -251,7 +273,8 @@ const deleteJoke = asyncHandler( async (req, res) => {
             const newJokeArray = jokeArray.filter((joke) => joke.id !== id);
             try {
                 const jsonJoke = JSON.stringify(newJokeArray);
-                fs.writeFileSync("./public/jokes.json", jsonJoke, "utf-8");
+                fs.writeFileSync(dataFilePath, jsonJoke, "utf-8");
+                await pushToGitHub();
             } catch (e) {
                 return res
                     .status(500)
