@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import autoIncrement from "mongoose-sequence";
+import mongooseSequence from "mongoose-sequence";
 
 const jokeSchema = new Schema(
     {
@@ -17,6 +17,6 @@ const jokeSchema = new Schema(
     }
 );
 
-jokeSchema.plugin(autoIncrement, { inc_field: 'jokeID' });
+jokeSchema.plugin(mongooseSequence(mongoose), { inc_field: 'jokeID' });
 
 export const Joke = mongoose.model("Joke", jokeSchema);
