@@ -80,7 +80,7 @@ const randomJoke = asyncHandler ( async (req, res) => {
                 new ApiResponse(
                     500,
                     {},
-                    "Unable To Save To Database."
+                    "Unable To Fetch From Database."
                 )
             );
     }
@@ -117,7 +117,156 @@ const jokeById = asyncHandler ( async (req, res) => {
                 new ApiResponse(
                     500,
                     {},
-                    "Unable To Save To Database."
+                    "Unable To Fetch From Database."
+                )
+            );
+    }
+});
+
+const jokeFilter = asyncHandler( async (req, res) => {
+    const jokeType = req.query.type;
+    try {
+        const joke = await Joke.find({ jokeType });
+        if (!joke) {
+            return res
+                .status(404)
+                .json(
+                    new ApiResponse(
+                        404,
+                        [],
+                        `JokeType - ${jokeType} Not Exist.`
+                    )
+                );
+        }
+        return res
+            .status(200)
+            .json(
+                new ApiResponse(
+                    200,
+                    joke,
+                    `JokeType - ${jokeType} Found.`
+                )
+            );
+    } catch (err) {
+        return res
+            .status(500)
+            .json(
+                new ApiResponse(
+                    500,
+                    {},
+                    "Unable To Fetch From Database."
+                )
+            );
+    }
+});
+
+const editJoke = asyncHandler( async (req, res) => {
+    const jokeID = parseInt(req.params.jokeID);
+    const jokeType = req.body.jokeType;
+    const jokeText = req.body.jokeText;
+
+    if (jokeText === undefined && jokeType === undefined) {
+        return res
+            .status(400)
+            .json(
+                new ApiResponse(
+                    400,
+                    {},
+                    "Fields - `jokeType` and `jokeText` - Not Found."
+                )
+            );
+    }
+
+    try {
+        const joke = await Joke.findOne({ jokeID });
+        if (!joke) {
+            return res
+                .status(404)
+                .json(
+                    new ApiResponse(
+                        404,
+                        {},
+                        `ID: ${jokeID} Does Not Exist.`
+                    )
+                );
+        }
+        joke.jokeType = jokeType;
+        joke.jokeText = jokeText;
+        await joke.save();
+
+        return res
+            .status(201)
+            .json(
+                new ApiResponse(
+                    201,
+                    joke,
+                    "Joke Edited."
+                )
+            );
+    } catch (err) {
+        return res
+            .status(500)
+            .json(
+                new ApiResponse(
+                    500,
+                    {},
+                    "Unable To Access The Database."
+                )
+            );
+    }
+});
+
+const patchJoke = asyncHandler ( async (req, res) => {
+    const jokeID = parseInt(req.params.jokeID);
+    const jokeType = req.body.jokeType;
+    const jokeText = req.body.jokeText;
+
+    if (jokeText == undefined && jokeType === undefined) {
+        return res
+            .status(404)
+            .json(
+                new ApiResponse(
+                    404,
+                    {},
+                    "Atleast Provide One - `jokeType` or `JokeText`"
+                )
+            );
+    }
+
+    try {
+        const joke = await Joke.findOne({ jokeID });
+        if (!joke) {
+            return res
+                .status(404)
+                .json(
+                    new ApiResponse(
+                        404,
+                        {},
+                        `ID: ${jokeID} Does Not Exist.`
+                    )
+                );
+        }
+
+        joke.jokeText = jokeText || joke.jokeText;
+        joke.jokeType = jokeType || joke.jokeType;
+        await joke.save();
+        return res
+            .status(201)
+            .json(
+                new ApiResponse(
+                    201,
+                    joke,
+                    "Joke Edited."
+                )
+            );
+    } catch (err) {
+        return res
+            .status(500)
+            .json(
+                new ApiResponse(
+                    500,
+                    {},
+                    "Unable To Access The Database."
                 )
             );
     }
@@ -126,5 +275,8 @@ const jokeById = asyncHandler ( async (req, res) => {
 export {
     addJoke,
     randomJoke,
-    jokeById
+    jokeById,
+    jokeFilter,
+    editJoke,
+    patchJoke
 };
